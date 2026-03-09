@@ -6,7 +6,7 @@ const io = require('socket.io')(http);
 app.use(express.static('public')); // This serves your HTML/JS files
 
 let players = {};
-
+app.get('/favicon.ico', (req, res) => res.status(204).end());
 io.on('connection', (socket) => {
     const room = socket.handshake.query.room || 'lobby';
     console.log(`User ${socket.id} joined room: ${room}`);

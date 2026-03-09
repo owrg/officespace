@@ -1,11 +1,19 @@
-const urlParams = new URLSearchParams(window.location.search);
-const roomID = urlParams.get('room') || 'lobby'; // Defaults to 'lobby' if no ?room= is in URL
+// 1. Declare variables at the top so they are "Global"
+let socket;
+let player;
+let otherPlayers;
 
-// When connecting, tell the server which room you're in
+// 2. Get the room ID
+const urlParams = new URLSearchParams(window.location.search);
+const roomID = urlParams.get('room') || 'lobby';
+
+// 3. Initialize the connection
 socket = io({
-    query: { room: roomID }
+    query: { room: roomID },
+    transports: ['websocket'] // This forces it to skip polling
 });
 
+// 4. Your Phaser Config
 const config = {
     type: Phaser.AUTO,
     parent: 'game-container',
@@ -15,12 +23,9 @@ const config = {
 };
 
 const game = new Phaser.Game(config);
-let socket, player, otherPlayers;
-
 function preload() {}
 
 function create() {
-    socket = io();
     otherPlayers = this.add.group();
     
     // 1. Get initial state
