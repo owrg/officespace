@@ -1,0 +1,25 @@
+{
+  "name": "officespace",
+  "version": "1.0.0",
+  "description": "Fun office space - spatial chat / proximity web app",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/owrg/officespace.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/owrg/officespace/issues"
+  },
+  "homepage": "https://github.com/owrg/officespace#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "socket.io": "^4.8.3"
+  }
+}
