@@ -1,0 +1,26 @@
+name: Push-to-EC2
+
+on:
+  push:
+    branches:
+      - main  # This triggers the action whenever you push to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/officespace
+            git pull origin main
+            npm install
+            # This next line assumes you have PM2 installed on EC2 to keep the app running
+            pm2 restart all || pm2 start server.js --name "spatial-app"
