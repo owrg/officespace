@@ -1,3 +1,11 @@
+const urlParams = new URLSearchParams(window.location.search);
+const roomID = urlParams.get('room') || 'lobby'; // Defaults to 'lobby' if no ?room= is in URL
+
+// When connecting, tell the server which room you're in
+socket = io({
+    query: { room: roomID }
+});
+
 const config = {
     type: Phaser.AUTO,
     parent: 'game-container',

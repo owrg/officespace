@@ -8,6 +8,8 @@ app.use(express.static('public')); // This serves your HTML/JS files
 let players = {};
 
 io.on('connection', (socket) => {
+    const room = socket.handshake.query.room;
+    socket.join(room); // This puts the user in a private "room"
     console.log('A user connected:', socket.id);
 
     // Create a new player object
@@ -15,7 +17,7 @@ io.on('connection', (socket) => {
 
     // Tell the new player about everyone else, and tell everyone about the new player
     socket.emit('currentPlayers', players);
-    socket.broadcast.emit('newPlayer', { id: socket.id, player: players[socket.id] });
+    socket.to(room).emit('newPlayer', { id: socket.id, player: players[socket.id] });
 
     // When a player moves, update the 'Brain' and tell others
     socket.on('playerMovement', (movementData) => {
