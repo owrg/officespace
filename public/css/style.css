@@ -1,10 +1,64 @@
 body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden; /* Prevents scrollbars from appearing on the browser window */
-    background-color: #2c3e50; /* Match your map background if needed */
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Prevents scrollbars from appearing on the browser window */
+  background-color: #2c3e50; /* Match your map background if needed */
+  font-family: Arial, Helvetica, sans-serif;
+  color: #eee;
 }
 #game-container {
-    width: 100vw; /* 100% Viewport Width */
-    height: 100vh; /* 100% Viewport Height */
+  width: 100vw; /* 100% Viewport Width */
+  height: 100vh; /* 100% Viewport Height */
+}
+#bottombar {
+  padding: 8px 12px;
+  background: #0b0b0b;
+  border-bottom: 1px solid #222;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+#game-container {
+  width: 100%;
+  height: calc(100% - 48px);
+  position: relative;
+  background: #222;
+}
+#prejoin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  color: #000;
+  padding: 18px;
+  border-radius: 8px;
+  z-index: 9999;
+  width: 30%;
+  min-width: 320px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+#prejoin input,
+#prejoin select,
+#prejoin button {
+  width: 100%;
+  padding: 8px;
+  margin-top: 8px;
+  box-sizing: border-box;
+}
+#diagnostics {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #fff;
+}
+a.debuglink {
+  color: #9cf;
+  text-decoration: underline;
+  cursor: pointer;
 }

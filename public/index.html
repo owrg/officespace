@@ -1,97 +1,111 @@
 <!doctype html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <title>OfficeSpace - Debug Index</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <style>
-    html,body { height:100%; margin:0; font-family:Arial,Helvetica,sans-serif; background:#111; color:#eee; }
-    #topbar { padding:8px 12px; background:#0b0b0b; border-bottom:1px solid #222; display:flex; gap:12px; align-items:center; }
-    #game-container { width:100%; height: calc(100% - 48px); position:relative; background:#222; }
-    #log { font-size:12px; color:#9f9; margin-left:auto; }
-    #prejoin { position: absolute; left:50%; top:50%; transform:translate(-50%,-50%); background:#fff; color:#000; padding:18px; border-radius:8px; z-index:9999; width:320px; box-shadow:0 8px 30px rgba(0,0,0,0.6); }
-    #prejoin input, #prejoin select, #prejoin button { width:100%; padding:8px; margin-top:8px; box-sizing:border-box; }
-    #diagnostics { position: absolute; left:8px; bottom:8px; z-index:9999; background:rgba(0,0,0,0.5); padding:8px; border-radius:6px; font-size:12px; color:#fff; }
-    a.debuglink { color:#9cf; text-decoration:underline; cursor:pointer; }
-  </style>
-</head>
-<body>
-  <div id="topbar">
-    <div>OfficeSpace (debug)</div>
-    <div id="log">not connected</div>
-  </div>
+  <head>
+    <meta charset="utf-8" />
+    <title>OfficeSpace - Debug Index</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #eee;
+      }
 
-  <div id="game-container"></div>
+    </style>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div id="game-container"></div>
 
-  <!-- prejoin overlay (keeps same ids your client expects) -->
-  <div id="prejoin">
-    <h3 style="margin:0 0 8px 0">Enter name & character</h3>
-    <input id="playerName" placeholder="Your name" />
-    <label style="display:block;margin-top:8px">Character</label>
-    <select id="avatarSelect">
-      <option value="0">Old man in brown suit</option>
-      <option value="1">Man in black suit and a stripey shirt</option>
-      <option value="2">Young man in blue suit</option>
-      <option value="3">Surgeon with mask</option>
-      <option value="4">Surgeon without mask</option>
-      <option value="5">Blonde woman in white</option>
-      <option value="6">Doctor with glasses</option>
-      <option value="7">Man in black suit with brown waistcoat</option>
-    </select>
-    <button id="joinBtn">Join</button>
-    <div style="margin-top:8px;font-size:12px;color:#444">Open Developer Tools (F12) → Console to see logs</div>
-  </div>
+    <!-- Bottombar - replace existing #bottombar with this -->
+    <div
+      id="bottombar"
+      style="
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 8px 12px;
+        background: #0b0b0b;
+        border-top: 1px solid #222;
+        z-index: 10000;
+      "
+    >
+      <div style="color: #ccc; margin-right: 6px; white-space: nowrap">
+        Say something:
+      </div>
+      <input
+        id="chatInput"
+        placeholder="Type message and press Enter"
+        style="
+          flex: 1;
+          padding: 8px;
+          border-radius: 6px;
+          border: 1px solid #333;
+          background: #111;
+          color: #fff;
+          outline: none;
+        "
+      />
+      <button
+        id="chatSend"
+        style="
+          margin-left: 6px;
+          padding: 8px 12px;
+          border-radius: 6px;
+          background: #1e90ff;
+          color: #fff;
+          border: none;
+          cursor: pointer;
+        "
+      >
+        Send
+      </button>
+    </div>
 
-  <div id="diagnostics" style="display:none;">
-    <div><strong>Diagnostics</strong></div>
-    <div id="diag-lines"></div>
-    <div style="margin-top:6px"><a class="debuglink" id="show-network">Show network tab</a></div>
-  </div>
+    <!-- prejoin overlay (keeps same ids your client expects) -->
+    <div id="prejoin">
+      <h1 style="margin: 0 0 8px 0">Welcome to Office Space</h1>
+      <h3 style="margin: 0 0 8px 0">Please show some ID</h3>
+      <label style="display: block; margin-top: 8px">What is your name?</label>
+      <input id="playerName" placeholder="Your name" />
+      <label style="display: block; margin-top: 8px">What do you look like?</label>
+      <select id="avatarSelect">
+        <option value="0">An old man in brown suit</option>
+        <option value="1">A man in black suit and a stripey shirt</option>
+        <option value="2">A young man in blue suit</option>
+        <option value="3">A surgeon with mask</option>
+        <option value="4">A surgeon without mask</option>
+        <option value="5">A blonde woman in white</option>
+        <option value="6">A doctor with glasses</option>
+        <option value="7">A man in black suit with brown waistcoat</option>
+      </select>
+      <button id="joinBtn">Pass security</button>
+    </div>
 
-  <!-- Phaser -->
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
-  <!-- socket.io client is served automatically at /socket.io/socket.io.js by the server -->
-  <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
 
-  <!-- Your game.js should be in public/ and referenced like this -->
-  <script>
-    // quick bootstrap to surface obvious loading errors early
-    console.log('[index] document loaded. Phaser version:', typeof Phaser !== 'undefined' ? Phaser.VERSION : 'Phaser not loaded');
-    if (typeof io === 'undefined') {
-      console.error('[index] socket.io client not found at /socket.io/socket.io.js — check server is running and socket.io is installed on the server.');
-      document.getElementById('log').textContent = 'socket.io client missing';
-    } else {
-      console.log('[index] socket.io client loaded, OK');
-    }
-  </script>
+    <script>
+      console.log(
+        "[index] document loaded. Phaser version:",
+        typeof Phaser !== "undefined" ? Phaser.VERSION : "Phaser not loaded",
+      );
+      if (typeof io === "undefined") {
+        console.error(
+          "[index] socket.io client not found at /socket.io/socket.io.js — check server is running and socket.io is installed on the server.",
+        );
+        document.getElementById("log").textContent = "socket.io client missing";
+      } else {
+        console.log("[index] socket.io client loaded, OK");
+      }
+    </script>
 
-  <!-- load your game.js last so everything above exists -->
-  <script src="game.js"></script>
-  <script>
-    // small helpers used by the index page and game.js
-    document.getElementById('show-network').addEventListener('click', () => {
-      alert('Open DevTools → Network tab. Look for game.js, socket.io, images, and check for 404s or JS errors in Console.');
-    });
-
-    // update topbar log from game.js by calling window.setTopbar
-    window.setTopbar = (txt) => {
-      const el = document.getElementById('log');
-      if (el) el.textContent = txt;
-    };
-
-    // capture unhandled errors
-    window.addEventListener('error', (ev) => {
-      console.error('[index] uncaught error:', ev.message, ev.filename, 'line', ev.lineno);
-      const diag = document.getElementById('diagnostics'); diag.style.display = 'block';
-      const lines = document.getElementById('diag-lines');
-      lines.innerHTML += `<div style="color:#f88">Error: ${ev.message} (${ev.filename}:${ev.lineno})</div>`;
-    });
-    window.addEventListener('unhandledrejection', (ev) => {
-      console.error('[index] unhandled rejection:', ev.reason);
-      const diag = document.getElementById('diagnostics'); diag.style.display = 'block';
-      const lines = document.getElementById('diag-lines');
-      lines.innerHTML += `<div style="color:#f88">Promise rejection: ${ev.reason}</div>`;
-    });
-  </script>
-</body>
+    <script src="game.js"></script>
+  </body>
 </html>
